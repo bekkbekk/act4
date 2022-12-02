@@ -15,208 +15,6 @@
 
     <title>TV Shows</title>
 
-    <script>
-        let home = true;
-
-        // first API data integration
-        const getTvShow = async (pageNum) => {
-            let loadingScreen = document.getElementById('loading-screen');
-            let container = document.getElementById('container');
-            let pageNumInput = document.getElementById('page-num');
-            let allPages = document.getElementById('all-pages');
-
-            // shows loading screen before retrieving data
-            loadingScreen.style.display = "flex";
-
-            // retrieving data from API
-            let response = await fetch('https://www.episodate.com/api/most-popular?page=' + pageNum);
-            let tvShow = await response.json();
-
-            // hides loading screen after retrieving data
-            loadingScreen.style.display = "none";
-
-            // clears the existing ocntent of the container
-            container.innerHTML = '';
-
-            // gets the length of the array from the response
-            let numOfShows = tvShow.tv_shows.length;
-
-            // setting the maximum allowed value for input
-            pageNumInput.max = tvShow.pages;
-            allPages.innerHTML = ' / ' + Number(tvShow.pages);
-
-            for (let i = 0; i < numOfShows; i++) {
-
-                // stores the data on each element in the array
-                let title = tvShow.tv_shows[i].name;
-                let network = tvShow.tv_shows[i].network;
-                let startDate = tvShow.tv_shows[i].start_date;
-                let thumbnailLink = tvShow.tv_shows[i].image_thumbnail_path;
-
-                // creates a div element and added a content
-                let element = document.createElement('div');
-                element.innerHTML = `
-                <div class="tv-show">
-                    <div class="tv-show-container">
-                        <img class="show-thumbnail" src="${thumbnailLink}" alt="tv-show-thumbnail">
-                        <div class="show-name">${title}</div>
-                        <div class="show-network">${network}</div>
-                        <div class="show-date">${startDate}</div>
-                    </div>
-                </div>
-                `;
-
-                // opens a new tab when a TV show is clicked
-                element.onclick = () => {
-                    window.open('https://www.google.com/search?q=' + title + ' TV show', '_blank')
-                }
-
-                // added the created element to the container element
-                container.appendChild(element);
-            }
-
-        }
-
-        // second API data integration
-        const searchTvShow = async (pageNum) => {
-            let loadingScreen = document.getElementById('loading-screen');
-            let container = document.getElementById('container');
-            let pageNumInput = document.getElementById('page-num');
-            let allPages = document.getElementById('all-pages');
-            let searchBar = document.getElementById('search-bar');
-
-            // turns the page number to 1 if it's the first search
-            if (home)
-                pageNumInput.value = '1';
-
-            home = false;
-
-            // stops if the search bar is empty
-            if (searchBar.value == '')
-                return;
-
-            // shows loading screen before retrieving data
-            loadingScreen.style.display = "flex";
-
-            // retrieving data from API
-            let response = await fetch('https://www.episodate.com/api/search?q=' + searchBar.value + '&page=' + pageNum);
-            let tvShow = await response.json();
-
-            // hides loading screen after retrieving data
-            loadingScreen.style.display = "none";
-
-            // clears the existing ocntent of the container
-            container.innerHTML = '';
-
-            // gets the length of the array from the response
-            let numOfShows = tvShow.tv_shows.length;
-
-            // setting the maximum allowed value for input
-            pageNumInput.max = tvShow.pages;
-            allPages.innerHTML = ' / ' + Number(tvShow.pages);
-
-            // when there are no results
-            if (tvShow.pages == 0)
-                pageNumInput.value = 0;
-
-            for (let i = 0; i < numOfShows; i++) {
-
-                // stores the data on each element in the array
-                let title = tvShow.tv_shows[i].name;
-                let network = tvShow.tv_shows[i].network;
-                let startDate = tvShow.tv_shows[i].start_date;
-                let thumbnailLink = tvShow.tv_shows[i].image_thumbnail_path;
-
-                // creates a div element and added a content
-                let element = document.createElement('div');
-                element.innerHTML = `
-                <div class="tv-show">
-                    <div class="tv-show-container">
-                        <img class="show-thumbnail" src="${thumbnailLink}" alt="tv-show-thumbnail">
-                        <div class="show-name">${title}</div>
-                        <div class="show-network">${network}</div>
-                        <div class="show-date">${startDate}</div>
-                    </div>
-                </div>
-                `;
-
-                // opens a new tab when a TV show is clicked
-                element.onclick = () => {
-                    window.open('https://www.google.com/search?q=' + title + ' TV show', '_blank')
-                }
-
-                // added the created element to the container element
-                container.appendChild(element);
-            }
-        }
-
-        // go to specific page
-        function goPage() {
-            let pageNum = document.getElementById('page-num');
-            let page = Number(pageNum.value);
-            let max = Number(pageNum.max);
-
-            // when there are no results
-            if (pageNum.value == 0) {
-                pageNum.max = 0;
-                return;
-            }
-
-            if (page <= 0)
-                page = 1;
-            else if (page > max)
-                page = max;
-
-            (home) ? getTvShow(page) : searchTvShow(page);
-            console.log(home)
-            pageNum.value = page;
-        }
-
-        // go to previous page
-        function prevPage() {
-            let pageNum = document.getElementById('page-num');
-            let page = Number(pageNum.value) - 1;
-
-            // when there are no results
-            if (pageNum.value == 0) {
-                pageNum.max = 0;
-                return;
-            }
-
-            page = (page <= 0) ? 1 : page;
-
-            (home) ? getTvShow(page) : searchTvShow(page);
-            pageNum.value = page;
-        }
-
-        // go to next page
-        function nextPage() {
-            let pageNum = document.getElementById('page-num');
-
-            // when there are no results
-            if (pageNum.value == 0) {
-                pageNum.max = 0;
-                return;
-            }
-
-            let page = Number(pageNum.value) + 1;
-            let max = Number(pageNum.max);
-
-            page = (page > max) ? max : page;
-
-            (home) ? getTvShow(page) : searchTvShow(page);
-            pageNum.value = page;
-        }
-
-        // go back to homePage
-        function homePage() {
-            home = true;
-            document.getElementById('search-bar').value = '';
-            document.getElementById('page-num').value = '1';
-            getTvShow(1);
-        }
-    </script>
-
     <style>
         :root {
             --tan: #B68D40;
@@ -496,6 +294,208 @@
             }
         }
     </style>
+
+    <script>
+        let home = true;
+
+        // first API data integration
+        const getTvShow = async (pageNum) => {
+            let loadingScreen = document.getElementById('loading-screen');
+            let container = document.getElementById('container');
+            let pageNumInput = document.getElementById('page-num');
+            let allPages = document.getElementById('all-pages');
+
+            // shows loading screen before retrieving data
+            loadingScreen.style.display = "flex";
+
+            // retrieving data from API
+            let response = await fetch('https://www.episodate.com/api/most-popular?page=' + pageNum);
+            let tvShow = await response.json();
+
+            // hides loading screen after retrieving data
+            loadingScreen.style.display = "none";
+
+            // clears the existing ocntent of the container
+            container.innerHTML = '';
+
+            // gets the length of the array from the response
+            let numOfShows = tvShow.tv_shows.length;
+
+            // setting the maximum allowed value for input
+            pageNumInput.max = tvShow.pages;
+            allPages.innerHTML = ' / ' + Number(tvShow.pages);
+
+            for (let i = 0; i < numOfShows; i++) {
+
+                // stores the data on each element in the array
+                let title = tvShow.tv_shows[i].name;
+                let network = tvShow.tv_shows[i].network;
+                let startDate = tvShow.tv_shows[i].start_date;
+                let thumbnailLink = tvShow.tv_shows[i].image_thumbnail_path;
+
+                // creates a div element and added a content
+                let element = document.createElement('div');
+                element.innerHTML = `
+                <div class="tv-show">
+                    <div class="tv-show-container">
+                        <img class="show-thumbnail" src="${thumbnailLink}" alt="tv-show-thumbnail">
+                        <div class="show-name">${title}</div>
+                        <div class="show-network">${network}</div>
+                        <div class="show-date">${startDate}</div>
+                    </div>
+                </div>
+                `;
+
+                // opens a new tab when a TV show is clicked
+                element.onclick = () => {
+                    window.open('https://www.google.com/search?q=' + title + ' TV show', '_blank')
+                }
+
+                // added the created element to the container element
+                container.appendChild(element);
+            }
+
+        }
+
+        // second API data integration
+        const searchTvShow = async (pageNum) => {
+            let loadingScreen = document.getElementById('loading-screen');
+            let container = document.getElementById('container');
+            let pageNumInput = document.getElementById('page-num');
+            let allPages = document.getElementById('all-pages');
+            let searchBar = document.getElementById('search-bar');
+
+            // turns the page number to 1 if it's the first search
+            if (home)
+                pageNumInput.value = '1';
+
+            home = false;
+
+            // stops if the search bar is empty
+            if (searchBar.value == '')
+                return;
+
+            // shows loading screen before retrieving data
+            loadingScreen.style.display = "flex";
+
+            // retrieving data from API
+            let response = await fetch('https://www.episodate.com/api/search?q=' + searchBar.value + '&page=' + pageNum);
+            let tvShow = await response.json();
+
+            // hides loading screen after retrieving data
+            loadingScreen.style.display = "none";
+
+            // clears the existing ocntent of the container
+            container.innerHTML = '';
+
+            // gets the length of the array from the response
+            let numOfShows = tvShow.tv_shows.length;
+
+            // setting the maximum allowed value for input
+            pageNumInput.max = tvShow.pages;
+            allPages.innerHTML = ' / ' + Number(tvShow.pages);
+
+            // when there are no results
+            if (tvShow.pages == 0)
+                pageNumInput.value = 0;
+
+            for (let i = 0; i < numOfShows; i++) {
+
+                // stores the data on each element in the array
+                let title = tvShow.tv_shows[i].name;
+                let network = tvShow.tv_shows[i].network;
+                let startDate = tvShow.tv_shows[i].start_date;
+                let thumbnailLink = tvShow.tv_shows[i].image_thumbnail_path;
+
+                // creates a div element and added a content
+                let element = document.createElement('div');
+                element.innerHTML = `
+                <div class="tv-show">
+                    <div class="tv-show-container">
+                        <img class="show-thumbnail" src="${thumbnailLink}" alt="tv-show-thumbnail">
+                        <div class="show-name">${title}</div>
+                        <div class="show-network">${network}</div>
+                        <div class="show-date">${startDate}</div>
+                    </div>
+                </div>
+                `;
+
+                // opens a new tab when a TV show is clicked
+                element.onclick = () => {
+                    window.open('https://www.google.com/search?q=' + title + ' TV show', '_blank')
+                }
+
+                // added the created element to the container element
+                container.appendChild(element);
+            }
+        }
+
+        // go to specific page
+        function goPage() {
+            let pageNum = document.getElementById('page-num');
+            let page = Number(pageNum.value);
+            let max = Number(pageNum.max);
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            if (page <= 0)
+                page = 1;
+            else if (page > max)
+                page = max;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            console.log(home)
+            pageNum.value = page;
+        }
+
+        // go to previous page
+        function prevPage() {
+            let pageNum = document.getElementById('page-num');
+            let page = Number(pageNum.value) - 1;
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            page = (page <= 0) ? 1 : page;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            pageNum.value = page;
+        }
+
+        // go to next page
+        function nextPage() {
+            let pageNum = document.getElementById('page-num');
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            let page = Number(pageNum.value) + 1;
+            let max = Number(pageNum.max);
+
+            page = (page > max) ? max : page;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            pageNum.value = page;
+        }
+
+        // go back to homePage
+        function homePage() {
+            home = true;
+            document.getElementById('search-bar').value = '';
+            document.getElementById('page-num').value = '1';
+            getTvShow(1);
+        }
+    </script> 
 </head>
 
 <body>
