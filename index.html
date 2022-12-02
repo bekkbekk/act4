@@ -371,10 +371,6 @@
             let allPages = document.getElementById('all-pages');
             let searchBar = document.getElementById('search-bar');
 
-            // turns the page number to 1 if it's the first search
-            if (home)
-                pageNumInput.value = '1';
-
             home = false;
 
             // stops if the search bar is empty
@@ -400,6 +396,7 @@
             // setting the maximum allowed value for input
             pageNumInput.max = tvShow.pages;
             allPages.innerHTML = ' / ' + Number(tvShow.pages);
+            pageNumInput.value = pageNum;
 
             // when there are no results
             if (tvShow.pages == 0)
@@ -501,7 +498,7 @@
             document.getElementById('page-num').value = '1';
             getTvShow(1);
         }
-    </script> 
+    </script>
 </head>
 
 <body>
