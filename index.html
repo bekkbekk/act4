@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2061/2061062.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>TV Shows</title>
+
+    <script>
+        let home = true;
+
+        // first API data integration
+        const getTvShow = async (pageNum) => {
+            let loadingScreen = document.getElementById('loading-screen');
+            let container = document.getElementById('container');
+            let pageNumInput = document.getElementById('page-num');
+            let allPages = document.getElementById('all-pages');
+
+            // shows loading screen before retrieving data
+            loadingScreen.style.display = "flex";
+
+            // retrieving data from API
+            let response = await fetch('https://www.episodate.com/api/most-popular?page=' + pageNum);
+            let tvShow = await response.json();
+
+            // hides loading screen after retrieving data
+            loadingScreen.style.display = "none";
+
+            // clears the existing ocntent of the container
+            container.innerHTML = '';
+
+            // gets the length of the array from the response
+            let numOfShows = tvShow.tv_shows.length;
+
+            // setting the maximum allowed value for input
+            pageNumInput.max = tvShow.pages;
+            allPages.innerHTML = ' / ' + Number(tvShow.pages);
+
+            for (let i = 0; i < numOfShows; i++) {
+
+                // stores the data on each element in the array
+                let title = tvShow.tv_shows[i].name;
+                let network = tvShow.tv_shows[i].network;
+                let startDate = tvShow.tv_shows[i].start_date;
+                let thumbnailLink = tvShow.tv_shows[i].image_thumbnail_path;
+
+                // creates a div element and added a content
+                let element = document.createElement('div');
+                element.innerHTML = `
+                <div class="tv-show">
+                    <div class="tv-show-container">
+                        <img class="show-thumbnail" src="${thumbnailLink}" alt="tv-show-thumbnail">
+                        <div class="show-name">${title}</div>
+                        <div class="show-network">${network}</div>
+                        <div class="show-date">${startDate}</div>
+                    </div>
+                </div>
+                `;
+
+                // opens a new tab when a TV show is clicked
+                element.onclick = () => {
+                    window.open('https://www.google.com/search?q=' + title + ' TV show', '_blank')
+                }
+
+                // added the created element to the container element
+                container.appendChild(element);
+            }
+
+        }
+
+        // second API data integration
+        const searchTvShow = async (pageNum) => {
+            let loadingScreen = document.getElementById('loading-screen');
+            let container = document.getElementById('container');
+            let pageNumInput = document.getElementById('page-num');
+            let allPages = document.getElementById('all-pages');
+            let searchBar = document.getElementById('search-bar');
+
+            // turns the page number to 1 if it's the first search
+            if (home)
+                pageNumInput.value = '1';
+
+            home = false;
+
+            // stops if the search bar is empty
+            if (searchBar.value == '')
+                return;
+
+            // shows loading screen before retrieving data
+            loadingScreen.style.display = "flex";
+
+            // retrieving data from API
+            let response = await fetch('https://www.episodate.com/api/search?q=' + searchBar.value + '&page=' + pageNum);
+            let tvShow = await response.json();
+            console.log(tvShow)
+
+            // hides loading screen after retrieving data
+            loadingScreen.style.display = "none";
+
+            // clears the existing ocntent of the container
+            container.innerHTML = '';
+
+            // gets the length of the array from the response
+            let numOfShows = tvShow.tv_shows.length;
+
+            // setting the maximum allowed value for input
+            pageNumInput.max = tvShow.pages;
+            allPages.innerHTML = ' / ' + Number(tvShow.pages);
+
+            // when there are no results
+            if (tvShow.pages == 0)
+                pageNumInput.value = 0;
+
+            for (let i = 0; i < numOfShows; i++) {
+
+                // stores the data on each element in the array
+                let title = tvShow.tv_shows[i].name;
+                let network = tvShow.tv_shows[i].network;
+                let startDate = tvShow.tv_shows[i].start_date;
+                let thumbnailLink = tvShow.tv_shows[i].image_thumbnail_path;
+
+                // creates a div element and added a content
+                let element = document.createElement('div');
+                element.innerHTML = `
+                <div class="tv-show">
+                    <div class="tv-show-container">
+                        <img class="show-thumbnail" src="${thumbnailLink}" alt="tv-show-thumbnail">
+                        <div class="show-name">${title}</div>
+                        <div class="show-network">${network}</div>
+                        <div class="show-date">${startDate}</div>
+                    </div>
+                </div>
+                `;
+
+                // opens a new tab when a TV show is clicked
+                element.onclick = () => {
+                    window.open('https://www.google.com/search?q=' + title + ' TV show', '_blank')
+                }
+
+                // added the created element to the container element
+                container.appendChild(element);
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --tan: #B68D40;
+            --cream: #F4EBD0;
+            --charcoal: #122620;
+            --gold: #D6AD60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input,
+        button {
+            border: none;
+            outline: none;
+            background: none;
+            appearance: none;
+        }
+
+        body {
+            background-color: var(--cream);
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.5;
+        }
+
+        #loading-screen #loading-gif {
+            width: 100px;
+        }
+
+        .header {
+            min-height: 90px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header #title {
+            font-size: 42px;
+            font-weight: 900;
+            cursor: pointer;
+            color: var(--charcoal);
+        }
+
+        .header .search-container #search-bar {
+            background-color: #fff;
+            width: 250px;
+            height: 50px;
+            margin-right: 8px;
+            border: 2px solid var(--charcoal);
+            border-radius: 15px;
+
+            padding: 10px;
+            font-size: 22px;
+        }
+
+        .header .search-container #search-bar:focus {
+            border: 2px solid var(--tan);
+        }
+
+        .header .search-container button {
+            background-color: #fff;
+            padding: 5px;
+            border: 2px solid var(--charcoal);
+            border-radius: 50%;
+            margin: 2px;
+
+            transition: ease 0.4s ease;
+        }
+
+        .header .search-container button:hover {
+            background-color: var(--tan);
+        }
+
+        .header .search-container button img {
+            width: 35px;
+        }
+
+        .pages {
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pages button,
+        .pages input {
+            margin: 5px;
+            padding: 5px 10px;
+            border: 3px solid var(--charcoal);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .pages button {
+            background-color: var(--gold);
+
+            transition: 0.4s ease;
+        }
+
+        .pages button:hover {
+            background-color: var(--tan);
+        }
+
+        .pages .search-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pages #all-pages {
+            font-size: 16px;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+        .pages #page-num {
+            background-color: #fff;
+            width: 5em;
+        }
+
+        .tv-shows {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tv-show {
+            width: 250px;
+            min-height: 450px;
+            margin: 20px;
+            padding: 10px;
+            border: 3px outset var(--charcoal);
+            text-align: center;
+            border-radius: 10px;
+            background-color: var(--charcoal);
+            color: var(--cream);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            transition: all ease 0.4s;
+        }
+
+        .tv-show:hover {
+            /* background: var(--tan); */
+            background-color: var(--gold);
+            transform: scale(104%);
+        }
+
+        .show-thumbnail {
+            width: 200px;
+            height: auto;
+            max-height: 304px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            border: 1px inset var(--cream);
+        }
+
+        .show-name {
+            font-size: 22px;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .show-network {
+            font-size: 20px;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .show-date {
+            font-size: 16px;
+        }
+
+        footer {
+            text-align: center;
+            background-color: #000;
+            padding: 24px 0;
+            color: var(--tan);
+        }
+
+        footer .icons {
+            display: flex;
+            justify-content: center;
+        }
+
+        footer .icons .icon-container {
+            background-color: var(--tan);
+            margin: 8px;
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        footer .icons a .soc-med-icon {
+            width: 30px;
+        }
+
+        footer .full-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        footer .section {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        footer .activity {
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        @media (max-width: 780px) {
+            .header {
+                display: block;
+                text-align: center;
+            }
+
+            .header .search-container {
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 465px) {
+            .header .search-container {
+                width: 260px;
+                margin: 0 auto;
+            }
+
+            .header .search-container #search-bar {
+                margin-bottom: 10px;
+            }
+
+            .pages {
+                display: block;
+            }
+
+            footer .full-name {
+                font-size: 26px;
+            }
+
+            footer .section {
+                font-size: 18px;
+            }
+
+            footer .activity {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- to be shown only when retrieving data from API -->
+    <div id="loading-screen">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif"
+            alt="loading-gif" id="loading-gif">
+    </div>
+
+    <div class="container header">
+        <div id="title">TV SHOWS</div>
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="Search TV shows" autocomplete="off">
+            <button id="search-btn" onclick="searchTvShow(1)">
+                <img src="https://cdn-icons-png.flaticon.com/512/2811/2811806.png" alt="search-icon" id="search-icon">
+            </button>
+            <button id="home-btn" onclick="homePage()">
+                <img src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="home-icon" id="home-icon">
+            </button>
+        </div>
+    </div>
+
+    <div class="container pages">
+        <button id="prev" onclick="prevPage()">PREV</button>
+        <div class="search-page">
+            <input type="number" id="page-num" min="1" value="1">
+            <div id="all-pages"> / 1132</div>
+            <button id="go" onclick="goPage()">GO</button>
+        </div>
+        <button id="next" onclick="nextPage()">NEXT</button>
+    </div>
+
+    <div class="container tv-shows pb-5" id="container">
+
+        <!-- <div class="tv-show">
+            <div class="tv-show-container">
+                <img class="show-thumbnail" src="https://static.episodate.com/images/tv-show/thumbnail/35624.jpg"
+                    alt="tv-show-thumbnail">
+                <div class="show-name">TV Show name</div>
+                <div class="show-network">TV Network</div>
+                <div class="show-date">2022-11-30</div>
+            </div>
+        </div> -->
+
+    </div>
+
+    <footer>
+        <div class="icons">
+            <div class="icon-container">
+                <a href="https://www.facebook.com/jecjec.lalap" target="_blank">
+                    <img src="https://cdn-icons-png.flaticon.com/512/20/20837.png" class="soc-med-icon"
+                        alt="soc-med-icon">
+                </a>
+            </div>
+            <div class="icon-container">
+                <a href="https://twitter.com/LetMeCodeYours" target="_blank"><img
+                        src="https://cdn-icons-png.flaticon.com/512/733/733635.png" class="soc-med-icon"
+                        alt="soc-med-icon">
+                </a>
+            </div>
+        </div>
+        <div class="full-name">Lalap, Jerwin P.</div>
+        <div class="section">BS Information Technology 3-1</div>
+        <div class="activity">Activity 4 - Web Development</div>
+    </footer>
+
+
+    <script>
+        // dito ko po nilagay yung pagtawag sa getTvShow() para po makapag getElementById po muna ako sa loading-screen. null po kasi yung loading-screen kung sa script sa taas ko po siya kukunin
+        getTvShow(1);
+
+        // go to specific page
+        function goPage() {
+            let pageNum = document.getElementById('page-num');
+            let page = Number(pageNum.value);
+            let max = Number(pageNum.max);
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            if (page <= 0)
+                page = 1;
+            else if (page > max)
+                page = max;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            console.log(home)
+            pageNum.value = page;
+        }
+
+        // go to previous page
+        function prevPage() {
+            let pageNum = document.getElementById('page-num');
+            let page = Number(pageNum.value) - 1;
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            page = (page <= 0) ? 1 : page;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            pageNum.value = page;
+        }
+
+        // go to next page
+        function nextPage() {
+            let pageNum = document.getElementById('page-num');
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            let page = Number(pageNum.value) + 1;
+            let max = Number(pageNum.max);
+
+            page = (page > max) ? max : page;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            pageNum.value = page;
+        }
+
+        // go back to homePage
+        function homePage() {
+            home = true;
+            document.getElementById('search-bar').value = '';
+            document.getElementById('page-num').value = '1';
+            getTvShow(1);
+        }
+    </script>
+
+</body>
+
+</html>
