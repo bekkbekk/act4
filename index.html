@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2061/2061062.png">
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
@@ -100,7 +101,6 @@
             // retrieving data from API
             let response = await fetch('https://www.episodate.com/api/search?q=' + searchBar.value + '&page=' + pageNum);
             let tvShow = await response.json();
-            console.log(tvShow)
 
             // hides loading screen after retrieving data
             loadingScreen.style.display = "none";
@@ -148,6 +148,72 @@
                 // added the created element to the container element
                 container.appendChild(element);
             }
+        }
+
+        // go to specific page
+        function goPage() {
+            let pageNum = document.getElementById('page-num');
+            let page = Number(pageNum.value);
+            let max = Number(pageNum.max);
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            if (page <= 0)
+                page = 1;
+            else if (page > max)
+                page = max;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            console.log(home)
+            pageNum.value = page;
+        }
+
+        // go to previous page
+        function prevPage() {
+            let pageNum = document.getElementById('page-num');
+            let page = Number(pageNum.value) - 1;
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            page = (page <= 0) ? 1 : page;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            pageNum.value = page;
+        }
+
+        // go to next page
+        function nextPage() {
+            let pageNum = document.getElementById('page-num');
+
+            // when there are no results
+            if (pageNum.value == 0) {
+                pageNum.max = 0;
+                return;
+            }
+
+            let page = Number(pageNum.value) + 1;
+            let max = Number(pageNum.max);
+
+            page = (page > max) ? max : page;
+
+            (home) ? getTvShow(page) : searchTvShow(page);
+            pageNum.value = page;
+        }
+
+        // go back to homePage
+        function homePage() {
+            home = true;
+            document.getElementById('search-bar').value = '';
+            document.getElementById('page-num').value = '1';
+            getTvShow(1);
         }
     </script>
 
@@ -288,7 +354,7 @@
             background-color: #fff;
             width: 5em;
         }
-        
+
         .tv-shows {
             display: flex;
             flex-wrap: wrap;
@@ -498,74 +564,10 @@
 
 
     <script>
-        // dito ko po nilagay yung pagtawag sa getTvShow() para po makapag getElementById po muna ako sa loading-screen. null po kasi yung loading-screen kung sa script sa taas ko po siya kukunin
+        // dito ko po nilagay yung pagtawag sa getTvShow()
+        // para po macreate muna yung mga element sa body tag
+        // na kailangan sa getTvShow()
         getTvShow(1);
-
-        // go to specific page
-        function goPage() {
-            let pageNum = document.getElementById('page-num');
-            let page = Number(pageNum.value);
-            let max = Number(pageNum.max);
-
-            // when there are no results
-            if (pageNum.value == 0) {
-                pageNum.max = 0;
-                return;
-            }
-
-            if (page <= 0)
-                page = 1;
-            else if (page > max)
-                page = max;
-
-            (home) ? getTvShow(page) : searchTvShow(page);
-            console.log(home)
-            pageNum.value = page;
-        }
-
-        // go to previous page
-        function prevPage() {
-            let pageNum = document.getElementById('page-num');
-            let page = Number(pageNum.value) - 1;
-
-            // when there are no results
-            if (pageNum.value == 0) {
-                pageNum.max = 0;
-                return;
-            }
-
-            page = (page <= 0) ? 1 : page;
-
-            (home) ? getTvShow(page) : searchTvShow(page);
-            pageNum.value = page;
-        }
-
-        // go to next page
-        function nextPage() {
-            let pageNum = document.getElementById('page-num');
-
-            // when there are no results
-            if (pageNum.value == 0) {
-                pageNum.max = 0;
-                return;
-            }
-
-            let page = Number(pageNum.value) + 1;
-            let max = Number(pageNum.max);
-
-            page = (page > max) ? max : page;
-
-            (home) ? getTvShow(page) : searchTvShow(page);
-            pageNum.value = page;
-        }
-
-        // go back to homePage
-        function homePage() {
-            home = true;
-            document.getElementById('search-bar').value = '';
-            document.getElementById('page-num').value = '1';
-            getTvShow(1);
-        }
     </script>
 
 </body>
