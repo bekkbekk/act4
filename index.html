@@ -445,13 +445,17 @@
                 return;
             }
 
+            // empty searh bar when in homepage
+            if (home)
+                document.getElementById('search-bar').value = '';
+
             if (page <= 0)
                 page = 1;
             else if (page > max)
                 page = max;
 
+            // calling the function for API data integration
             (home) ? getTvShow(page) : searchTvShow(page);
-            console.log(home)
             pageNum.value = page;
         }
 
@@ -466,8 +470,13 @@
                 return;
             }
 
+            // empty searh bar when in homepage
+            if (home)
+                document.getElementById('search-bar').value = '';
+
             page = (page <= 0) ? 1 : page;
 
+            // calling the function for API data integration
             (home) ? getTvShow(page) : searchTvShow(page);
             pageNum.value = page;
         }
@@ -482,11 +491,16 @@
                 return;
             }
 
+            // empty searh bar when in homepage
+            if (home)
+                document.getElementById('search-bar').value = '';
+
             let page = Number(pageNum.value) + 1;
             let max = Number(pageNum.max);
 
             page = (page > max) ? max : page;
 
+            // calling the function for API data integration
             (home) ? getTvShow(page) : searchTvShow(page);
             pageNum.value = page;
         }
