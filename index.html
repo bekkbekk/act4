@@ -23,11 +23,21 @@
             --gold: #D6AD60;
         }
 
+        @keyframes moveArrow {
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         input,
@@ -57,6 +67,27 @@
 
         #loading-screen #loading-gif {
             width: 100px;
+        }
+
+        #arrow-container {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            cursor: pointer;
+
+            animation: moveArrow;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+        }
+
+        #arrow-up {
+            width: 25px;
+            height: 25px;
+            border: solid var(--tan);
+            border-width: 0 5px 5px 0;
+            display: none;
+            padding: 3px;
+            transform: rotate(-135deg);
         }
 
         .header {
@@ -511,6 +542,12 @@
             document.getElementById('page-num').value = '1';
             getTvShow(1);
         }
+
+        // go back to top
+        function arrowUpClicked() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
     </script>
 </head>
 
@@ -532,6 +569,11 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" alt="home-icon" id="home-icon">
             </button>
         </div>
+    </div>
+
+    <!-- arrow up -->
+    <div id="arrow-container" onclick="arrowUpClicked()">
+        <div id="arrow-up"></div>
     </div>
 
     <div class="container pages">
@@ -573,6 +615,19 @@
         <div class="activity">Activity 4 - Web Development</div>
     </footer>
 
+    <script>
+        window.addEventListener('load', () => {
+            let arrowUp = document.getElementById('arrow-up');
+
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset >= screen.height / 4)
+                    arrowUp.style.display = "inline-block";
+                else
+                    arrowUp.style.display = "none";
+
+            })
+        });
+    </script>
 </body>
 
 </html>
