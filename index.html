@@ -357,7 +357,7 @@
             let numOfShows = tvShow.tv_shows.length;
 
             // setting the maximum allowed value for input
-            pageNumInput.max = tvShow.pages;
+            pageNumInput.max = Number(tvShow.pages);
             allPages.innerHTML = ' / ' + Number(tvShow.pages);
             pageNumInput.value = pageNum;
 
@@ -424,7 +424,7 @@
             let numOfShows = tvShow.tv_shows.length;
 
             // setting the maximum allowed value for input
-            pageNumInput.max = tvShow.pages;
+            pageNumInput.max = Number(tvShow.pages);
             allPages.innerHTML = ' / ' + Number(tvShow.pages);
             pageNumInput.value = pageNum;
 
