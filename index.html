@@ -156,7 +156,6 @@
         .tv-shows {
             display: flex;
             flex-wrap: wrap;
-            /* align-items: center; */
             justify-content: center;
             min-height: 100vh;
         }
@@ -181,7 +180,6 @@
         }
 
         .tv-show:hover {
-            /* background: var(--tan); */
             background-color: var(--gold);
             transform: scale(104%);
         }
@@ -321,7 +319,7 @@
             // hides loading screen after retrieving data
             loadingScreen.style.display = "none";
 
-            // clears the existing ocntent of the container
+            // clears the existing content of the container
             container.innerHTML = '';
 
             // gets the length of the array from the response
@@ -330,6 +328,7 @@
             // setting the maximum allowed value for input
             pageNumInput.max = tvShow.pages;
             allPages.innerHTML = ' / ' + Number(tvShow.pages);
+            pageNumInput.value = pageNum;
 
             for (let i = 0; i < numOfShows; i++) {
 
@@ -387,7 +386,7 @@
             // hides loading screen after retrieving data
             loadingScreen.style.display = "none";
 
-            // clears the existing ocntent of the container
+            // clears the existing content of the container
             container.innerHTML = '';
 
             // gets the length of the array from the response
@@ -515,7 +514,7 @@
     </script>
 </head>
 
-<body onload="getTvShow(1)">
+<body onload="getTvShow(3)">
     <!-- to be shown only when retrieving data from API -->
     <div id="loading-screen">
         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif"
@@ -546,17 +545,6 @@
     </div>
 
     <div class="container tv-shows pb-5" id="container">
-
-        <!-- <div class="tv-show">
-            <div class="tv-show-container">
-                <img class="show-thumbnail" src="https://static.episodate.com/images/tv-show/thumbnail/35624.jpg"
-                    alt="tv-show-thumbnail">
-                <div class="show-name">TV Show name</div>
-                <div class="show-network">TV Network</div>
-                <div class="show-date">2022-11-30</div>
-            </div>
-        </div> -->
-
     </div>
 
     <footer>
